@@ -11,11 +11,6 @@ class Soldat extends Ennemi
         parent::__construct($pv, $force, $xp);
     }
 
-    public function attaqueSpeciale()
-    {
-        //rand
-    }
-
     public function getStats()
     {
         echo "               /\_[]_/\
