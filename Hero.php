@@ -7,11 +7,15 @@ class Hero extends Personnage
     private $lvl = 1;
     private $countSoldat;
     private $countChef;
+    private $countVictory;
+    private $countDefeat;
 
     public function __construct($name, $pv, $force)
     {
         parent::__construct($pv, $force);
         $this->name = $name;
+        $this->countVictory = 0;
+        $this->countDefeat = 0;
     }
 
     public function getName()
@@ -75,12 +79,52 @@ class Hero extends Personnage
         $this->pv = $this->pvInitial;
     }
 
-    public function levelUp()
+    public function levelUp($ennemi)
     {
         $this->lvl ++;
-        $this->pv = round($this->pvInitial + $this->pv*0.25, 2);
-        $this->force = round($this->force + $this->force*0.25, 2);
+        if($this->lvl > 3) {
+            $this->pv = round($this->pvInitial + $this->pv * 0.25, 2);
+            $this->force = round($this->force + $this->force * 0.15, 2);
+        } else {
+            $this->pv = round($this->pvInitial + $this->pv*1.25, 2);
+            $this->force = round($this->force + $this->force * 0.75, 2);
+        }
         $this->pvInitial = $this->pv;
+        switch ($ennemi) {
+            case 'Soldat':
+                $this->countSoldat++;
+                break;
+            case 'Chef':
+                $this->countChef++;
+                break;
+        }
     }
 
+    public function getEnnemiCounter()
+    {
+        return [
+            "soldat" => $this->countSoldat,
+            "chef" => $this->countChef
+        ];
+}
+
+    public function getVictories()
+    {
+        return $this->countVictory;
+    }
+
+    public function getDefeats()
+    {
+        return $this->countDefeat;
+    }
+
+    public function incrementDefeat()
+    {
+        $this->countDefeat++;
+    }
+
+    public function incrementVictory()
+    {
+        $this->countVictory++;
+    }
 }

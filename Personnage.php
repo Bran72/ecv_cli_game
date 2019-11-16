@@ -20,7 +20,7 @@ abstract class Personnage
 
     public function attack(Personnage $personnage)
     {
-        $personnage->pv -= $this->force;
+        $personnage->pv = round($personnage->pv - $this->force, 2);
         if(is_a($personnage, Hero::class)) {
             echo "\n\e[31mOuch ! ".get_class($this)." vous attaque et vous retire \e[91m$this->force\e[31m points de vie !\e[0m\n\n";
         } else {

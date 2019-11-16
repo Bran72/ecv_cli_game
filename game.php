@@ -2,7 +2,12 @@
 
 require 'Personnage.php';
 require 'Hero.php';
+require 'Ennemi.php';
 require 'Soldat.php';
+require 'Chef.php';
+require 'Boss.php';
+
+// Ideal terminal size: 90x60
 
 initGame();
 $name = selectUser();
@@ -35,11 +40,11 @@ function cli_action($hero, $ennemi)
             case '1':
                 $hero->attack($ennemi);
                 $ennemi->getStats();
-                //printf '|%4s|\n' a ab abc abcd abcde (align to right)
+
                 if ($ennemi->isAlive()) {
                     $ennemi->attack($hero);
                 } else {
-                    winGame($hero);
+                    winGame($hero, $ennemi);
                 }
                 if($hero->isAlive()) {
                     echo "\n";
@@ -47,7 +52,7 @@ function cli_action($hero, $ennemi)
                     echo "\n";
                     cli_action($hero, $ennemi);
                 } else {
-                    gameOver();
+                    gameOver($hero);
                 }
                 break;
             case '2':
@@ -60,12 +65,12 @@ function cli_action($hero, $ennemi)
                     echo "\n";
                     cli_action($hero, $ennemi);
                 } else {
-                    gameOver();
+                    gameOver($hero);
                 }
                 break;
         }
     } else {
-        echo "\n/!\\ Vous devez saisir 1 ou 2 ! /!\\\n\n";
+        echo "\n\e[31m/!\\ Vous devez saisir 1 ou 2 ! /!\\\e[0m\n\n";
         cli_action($hero, $ennemi);
     }
 }
@@ -130,22 +135,42 @@ function startCombat($hero)
 {
     echo exec('clear');
     echo "Tu es attaqué en duel, que le combat commence !\n";
-    $ennemiPV = $hero->getLvl() > 3 ? rand($hero->getPV()*1, $hero->getPV()*1.75) : rand($hero->getPV()-2, $hero->getPV()+2);
-    $ennemiForce = $hero->getLvl() > 3 ? rand($hero->getForce()*1, $hero->getForce()*1.75) : rand($hero->getForce()-2, $hero->getForce()+2);
+    $ennemiPV = $hero->getLvl() > 3 ? rand($hero->getPV()*1.25, $hero->getPV()*1.5) : rand($hero->getPV()-2, $hero->getPV()+2);
+    $ennemiForce = $hero->getLvl() > 3 ? rand($hero->getForce()*0.5, $hero->getForce()*1.25) : rand($hero->getForce()-2, $hero->getForce()+2);
     $ennemiXP = $hero->getLvl() > 3 ? rand($hero->getLvl()*1.25, $hero->getLvl()*1.75) : $hero->getLvl();
-    $ennemi = new Soldat($ennemiPV, $ennemiForce, $ennemiXP);
+
+    // + condition soldat / chef / boss
+    $counterEnnemi = $hero->getEnnemiCounter();
+    $rand = rand(0, 100);
+    if($counterEnnemi['soldat'] >= 8) {
+        if ($rand < 40) {
+            $ennemi = new Chef($ennemiPV, $ennemiForce, $ennemiXP);
+        } else {
+            $ennemi = new Soldat($ennemiPV, $ennemiForce, $ennemiXP);
+        }
+    } elseif ($counterEnnemi['soldat'] >= 8 && $counterEnnemi['chef'] >= 3) {
+        if ($rand < 20)
+            $ennemi = new Boss($ennemiPV, $ennemiForce, $ennemiXP);
+        elseif ($rand > 20 && $rand < 50 )
+            $ennemi = new Chef($ennemiPV, $ennemiForce, $ennemiXP);
+        else
+            $ennemi = new Soldat($ennemiPV, $ennemiForce, $ennemiXP);
+    } else {
+        $ennemi = new Soldat($ennemiPV, $ennemiForce, $ennemiXP);
+    }
+
     echo "\n";
     $ennemi->getStats();
     echo "\n";
     echo str_pad("", 50,"=",STR_PAD_BOTH)."\n";
     echo "\n";
-    $hero->getHerostats();
+    $hero->getHeroStats();
     cli_action($hero, $ennemi);
 }
 
-function winGame($hero) {
-    //lvlUp
-    $hero->levelUp();
+function winGame($hero, $ennemi) {
+    $hero->levelUp(get_class($ennemi));
+    $hero->incrementVictory();
     $choiceInput = fopen("php://stdin", "r");
     echo "\n";
     echo "Bravo !!! Vous avez gagné ce combat !\n\n";
@@ -154,27 +179,63 @@ function winGame($hero) {
     if ($choice === '1' || $choice === '2') {
         switch ($choice) {
             case '1':
-                return startCombat($hero);
+                startCombat($hero);
+                break;
             case '2':
-                echo exec('exit');
-                exit();
+                leaveGame($hero);
+                break;
         }
     } else {
-        echo "\n/!\\ Vous devez saisir 1 ou 2 ! /!\\\n\n";
-        winGame($hero);
+        echo "\n\e[31m/!\\ Vous devez saisir 1 ou 2 ! /!\\\e[0m\n\n";
+        winGame($hero, $ennemi);
     }
-
 }
 
-function gameOver()
+function gameOver($hero)
 {
+    $choiceInput = fopen("php://stdin", "r");
+    $hero->incrementDefeat();
+    echo $hero->getHeroStats();
     echo "\e[31m
   _____          __  __ ______    ______      ________ _____  
  / ____|   /\   |  \/  |  ____|  / __ \ \    / /  ____|  __ \ 
 | |  __   /  \  | \  / | |__    | |  | \ \  / /| |__  | |__) |
 | | |_ | / /\ \ | |\/| |  __|   | |  | |\ \/ / |  __| |  _  / 
 | |__| |/ ____ \| |  | | |____  | |__| | \  /  | |____| | \ \ 
- \_____/_/    \_\_|  |_|______|  \____/   \/   |______|_|  \_\ \e[0m";
+ \_____/_/    \_\_|  |_|______|  \____/   \/   |______|_|  \_\ \e[0m\n\n";
+
+    echo "Voulez-vous recommencer ?\n1: Recommencer\n2: Quitter\n-> ";
+    $choice = trim(fgets($choiceInput));
+    if ($choice === '1' || $choice === '2') {
+        switch ($choice) {
+            case '1':
+                $hero->seSoigner();
+                return startCombat($hero);
+            case '2':
+                leaveGame($hero);
+        }
+    }
+}
+
+function gameOverError()
+{
+    $nameInput = fopen("php://stdin", "r");
+    echo "\n\e[31m/!\\ Vous devez saisir 1 ou 2 ! /!\\\e[0m\n\n";
+    echo "Voulez-vous recommencer ?\n1: Recommencer\n2: Quitter\n-> ";
+    return trim(fgets($nameInput));
+}
+
+function leaveGame($hero) {
+    // TODO: stats du joueur, avec ses victoires / défaites, pourcentages,... (?)
+    echo exec('clear');
+
+    echo "\nAu-revoir ".$hero->getName()." !\nOn espère te revoir bientôt ;-)\n\n";
+    echo str_pad('Statistiques', 28,"-",STR_PAD_BOTH)."\n";
+    echo "|  \e[32mVictoires\e[0m  |  \e[31mDéfaites\e[0m  |\n";
+    echo "|".str_pad($hero->getVictories(),13, " ",STR_PAD_BOTH)."|";
+    echo str_pad($hero->getDefeats(), 12," ",STR_PAD_BOTH)."|\n";
+    echo str_pad("-", 28,"-",STR_PAD_BOTH)."\n\n\n";
+
     echo exec('exit');
     exit();
 }
