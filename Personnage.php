@@ -14,7 +14,8 @@ abstract class Personnage
         $this->force = $force;
     }
 
-    public function isAlive() {
+    public function isAlive()
+    {
         return $this->pv > 0;
     }
 
@@ -32,6 +33,4 @@ abstract class Personnage
     {
         $this->pv = $pv;
     }
-
-    //abstract function specialAttack();
 }
