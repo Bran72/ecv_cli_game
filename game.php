@@ -45,7 +45,7 @@ function cli_action($hero, $ennemi)
                 }
                 if($hero->isAlive()) {
                     echo "\n";
-                    $hero->getHerostats();
+                    $hero->getHeroStats();
                     echo "\n";
                     cli_action($hero, $ennemi);
                 } else {
@@ -58,7 +58,7 @@ function cli_action($hero, $ennemi)
                 $ennemi->attack($hero);
                 if($hero->isAlive()) {
                     echo "\n";
-                    $hero->getHerostats();
+                    $hero->getHeroStats();
                     echo "\n";
                     cli_action($hero, $ennemi);
                 } else {
@@ -169,12 +169,14 @@ function winGame($hero, $ennemi) {
     $hero->incrementVictory();
     $choiceInput = fopen("php://stdin", "r");
     echo "\n";
-    echo "Bravo !!! Vous avez gagné ce combat !\n\n";
+    echo "\e[32mBravo !!! Vous avez gagné ce combat !\e[0m\n\n";
     echo "Voulez-vous continuer et passer au duel suivant ?\n1: Continuer\n2: Quitter\n-> ";
     $choice = trim(fgets($choiceInput));
     if ($choice === '1' || $choice === '2') {
         switch ($choice) {
             case '1':
+                $ennemi = null;
+                unset($ennemi);
                 startCombat($hero);
                 break;
             case '2':

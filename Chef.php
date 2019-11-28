@@ -10,7 +10,7 @@ class Chef extends Ennemi
     {
         parent::__construct($pv, $force, $xp);
         $this->boostDefense = .25;
-        $this->pv = $this->pv * $this->boostDefense;
+        $this->pv = $this->pv + ($this->pv * $this->boostDefense);
 
         $design1 = "
                        .-.
