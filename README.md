@@ -13,7 +13,7 @@ Dans ce jeu, vous pouvez créer votre personnage, et  combattre différents type
  
 **:rocket: Utilisation**
 
-  ...
+  - Pour une meilleure expérience de jeu, il est recommandé de redimensionner la fenêtre du terminal en **90x60** (Mac/Linux)
  
 **:construction_worker: Auteurs**
 - Brandon LEININGER
