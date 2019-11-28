@@ -33,7 +33,7 @@ function cli_action($hero, $ennemi)
     $selectAction = fopen("php://stdin", "r");
     echo "Que voulez-vous faire ?\n1: Attaquer\n2: Se soigner\n-> ";
     $action = trim(fgets($selectAction));
-    echo exec('clear');
+    shellDetectClear();
 
     if ($action === '1' || $action === '2') {
         switch ($action) {
@@ -77,8 +77,9 @@ function cli_action($hero, $ennemi)
 
 function initGame()
 {
+    shellDetectClear();
     $start = fopen("php://stdin", "r");
-    echo exec('clear');
+    shellDetectClear();
     echo "Bienvenue cher voyageur !\n
 Nous sommes heureux de te compter parmit les joueurs de ECVFight. Dans ce tournois,
 tu devras donner le meilleur de toi-même afin de triompher de tous les ennemis qui se
@@ -133,7 +134,7 @@ les touches CTRL+C.\n\n\e[33mRetrouve ci-dessous les stats de ton joueur:\e[0m\n
 
 function startCombat($hero)
 {
-    echo exec('clear');
+    shellDetectClear();
     echo "Tu es attaqué en duel, que le combat commence !\n";
     $ennemiPV = $hero->getLvl() > 3 ? rand($hero->getPV()*1.25, $hero->getPV()*1.5) : rand($hero->getPV()-2, $hero->getPV()+2);
     $ennemiForce = $hero->getLvl() > 3 ? rand($hero->getForce()*0.5, $hero->getForce()*1.25) : rand($hero->getForce()-2, $hero->getForce()+2);
@@ -227,7 +228,7 @@ function gameOverError()
 
 function leaveGame($hero) {
     // TODO: stats du joueur, avec ses victoires / défaites, pourcentages,... (?)
-    echo exec('clear');
+    shellDetectClear();
 
     echo "\nAu-revoir ".$hero->getName()." !\nOn espère te revoir bientôt ;-)\n\n";
     echo str_pad('Statistiques', 28,"-",STR_PAD_BOTH)."\n";
@@ -238,4 +239,12 @@ function leaveGame($hero) {
 
     echo exec('exit');
     exit();
+}
+
+function shellDetectClear(){
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        echo exec('cls');
+    } else {
+        echo exec('clear');
+    }
 }
