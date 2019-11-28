@@ -33,4 +33,15 @@ abstract class Personnage
     {
         $this->pv = $pv;
     }
+
+    public function getLifeBar () {
+            $pvRatio = round(($this->pv/$this->pvInitial)*22); // pour remettre les pv sur 22 (taille de la barre de vie)
+            $pv = str_repeat("=", $pvRatio > 0 ? $pvRatio : 0);
+            if(get_class($this) !== "Hero") {
+                echo str_pad(get_class($this), 23,"-",STR_PAD_BOTH)."\n";
+                echo "|‎\e[31m".str_pad($pv, 21, " ",STR_PAD_RIGHT)."‎\e[0m|\n";
+            }else {
+                echo "|‎\e[32m".str_pad($pv, 21, " ",STR_PAD_RIGHT)."‎\e[0m|\n";
+            }
+    }
 }
