@@ -60,21 +60,22 @@ class Hero extends Personnage
     {
         echo $this->getHeroDesign();
         echo "\n\n";
-        echo "-".str_pad(strtoupper($this->name), 25,"-",STR_PAD_RIGHT)."\n";
-        echo "|  LVL  |  PV  |  FORCE  |\n";
+        echo "-".str_pad(strtoupper($this->name), 25,"-",STR_PAD_BOTH)."\n";
+        parent::getLifeBar();
+        echo str_pad("_", 25,"_",STR_PAD_BOTH)."\n";
+        echo "|  PV  |  FORCE  |  LVL  |\n";
 
-        echo "|".str_pad($this->lvl, 7," ",STR_PAD_BOTH)."|";
-        echo $this->pv <= $this->pvInitial/3 ? "\e[31m" : "";
+        echo $this->pv <= $this->pvInitial/3 ? "|\e[31m" : "|";
         echo str_pad($this->pv > 0 ? $this->pv : 0, 6," ",STR_PAD_BOTH);
         echo "\e[0m";
 
-        echo "|".str_pad($this->force, 9," ",STR_PAD_BOTH)."|\n";
+        echo "|".str_pad($this->force, 9," ",STR_PAD_BOTH)."|";
+        echo str_pad($this->lvl, 7," ",STR_PAD_BOTH)."|\n";
         echo str_pad("-", 26,"-",STR_PAD_BOTH)."\n\n";
     }
 
     public function seSoigner()
     {
-        //$this->pv += $this->pv*0.25;
         echo "\n\e[32m".$this->name." choisit de se soigner et restaure sa santé !\e[0m\n\n";
         $this->pv = $this->pvInitial;
     }
