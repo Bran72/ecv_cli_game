@@ -1,7 +1,5 @@
 <?php
 
-require 'Ennemi.php';
-
 
 class Soldat extends Ennemi
 {
@@ -11,9 +9,21 @@ class Soldat extends Ennemi
         parent::__construct($pv, $force, $xp);
     }
 
-    public function attaqueSpeciale()
+    public function getStats()
     {
-        //rand
+        echo "               /\_[]_/\
+              |] _||_ [|
+       ___     \/ || \/
+      /___\       ||
+     (|0 0|)      ||
+   __/{\U/}\_ ___/vvv
+  / \  {~}   / _|_P|
+  | /\  ~   /_/   []
+  |_| (____)        
+  \_]/______\        
+     _\_||_/_           
+    (_,_||_,_)\n\n";
+        parent::getStats();
     }
 
 }
