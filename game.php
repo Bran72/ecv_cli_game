@@ -187,8 +187,26 @@ function winGame($hero, $ennemi) {
                 break;
         }
     } else {
-        echo "\n\e[31m/!\\ Vous devez saisir 1 ou 2 ! /!\\\e[0m\n\n";
-        winGame($hero, $ennemi);
+        winGameError($hero);
+    }
+}
+
+function winGameError($hero) {
+    echo "\n\e[31m/!\\ Vous devez saisir 1 ou 2 ! /!\\\e[0m\n\n";
+    $choiceInput = fopen("php://stdin", "r");
+    echo "Voulez-vous continuer et passer au duel suivant ?\n1: Continuer\n2: Quitter\n-> ";
+    $choice = trim(fgets($choiceInput));
+    if ($choice === '1' || $choice === '2') {
+        switch ($choice) {
+            case '1':
+                startCombat($hero);
+                break;
+            case '2':
+                leaveGame($hero);
+                break;
+        }
+    } else {
+        winGameError($hero);
     }
 }
 
