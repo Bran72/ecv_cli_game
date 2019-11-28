@@ -7,8 +7,6 @@ require 'Soldat.php';
 require 'Chef.php';
 require 'Boss.php';
 
-// Ideal terminal size: 90x60
-
 initGame();
 $name = selectUser();
 if($name === '') {
@@ -29,7 +27,6 @@ echo "\n";
 
 function cli_action($hero, $ennemi)
 {
-    // Open CLI to select what to do
     $selectAction = fopen("php://stdin", "r");
     echo "Que voulez-vous faire ?\n1: Attaquer\n2: Se soigner\n-> ";
     $action = trim(fgets($selectAction));
@@ -140,19 +137,18 @@ function startCombat($hero)
     $ennemiForce = $hero->getLvl() > 3 ? rand($hero->getForce()*0.5, $hero->getForce()*1.25) : rand($hero->getForce()-2, $hero->getForce()+2);
     $ennemiXP = $hero->getLvl() > 3 ? rand($hero->getLvl()*1.25, $hero->getLvl()*1.75) : $hero->getLvl();
 
-    // + condition soldat / chef / boss
     $counterEnnemi = $hero->getEnnemiCounter();
     $rand = rand(0, 100);
-    if($counterEnnemi['soldat'] >= 8) {
-        if ($rand < 40) {
+    if($counterEnnemi['soldat'] >= 5) {
+        if ($rand < 50) {
             $ennemi = new Chef($ennemiPV, $ennemiForce, $ennemiXP);
         } else {
             $ennemi = new Soldat($ennemiPV, $ennemiForce, $ennemiXP);
         }
-    } elseif ($counterEnnemi['soldat'] >= 8 && $counterEnnemi['chef'] >= 3) {
-        if ($rand < 20)
+    } elseif ($counterEnnemi['soldat'] >= 5 && $counterEnnemi['chef'] >= 3) {
+        if ($rand < 33)
             $ennemi = new Boss($ennemiPV, $ennemiForce, $ennemiXP);
-        elseif ($rand > 20 && $rand < 50 )
+        elseif ($rand > 33 && $rand < 66 )
             $ennemi = new Chef($ennemiPV, $ennemiForce, $ennemiXP);
         else
             $ennemi = new Soldat($ennemiPV, $ennemiForce, $ennemiXP);
