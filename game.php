@@ -79,7 +79,6 @@ function initGame()
 {
     shellDetectClear();
     $start = fopen("php://stdin", "r");
-    shellDetectClear();
     echo "Bienvenue cher voyageur !\n
 Nous sommes heureux de te compter parmit les joueurs de ECVFight. Dans ce tournois,
 tu devras donner le meilleur de toi-même afin de triompher de tous les ennemis qui se
