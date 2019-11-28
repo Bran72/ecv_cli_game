@@ -5,7 +5,7 @@ abstract class Personnage
 {
     protected $pv;
     protected $force;
-    protected $pvInitial; //variable pour conserver les pv à la création de l'instance
+    protected $pvInitial; // variable pour conserver les pv à la création de l'instance
 
     public function __construct($pv, $force)
     {
